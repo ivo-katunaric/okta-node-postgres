@@ -1,0 +1,7 @@
+version: "3"
+services:
+  instakilogram_db:
+    image: "postgres:11"
+    container_name: "instakilogram_db"
+    ports:
+      - "54321:5432"
