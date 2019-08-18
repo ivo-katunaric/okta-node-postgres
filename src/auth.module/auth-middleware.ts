@@ -1,6 +1,8 @@
 import { NestMiddleware } from '@nestjs/common';
 import { Request, Response } from 'express';
+
 import { getSessionBySessionId } from './okta-client';
+import { assertUser } from '../user.module/assert-user';
 
 export class AuthMiddleware implements NestMiddleware {
   async use(req: Request, res: Response, next: Function) {
@@ -10,7 +12,8 @@ export class AuthMiddleware implements NestMiddleware {
     }
 
     try {
-      req['auth'] = await getSessionBySessionId(sessionId);
+      const session = await getSessionBySessionId(sessionId);
+      req['user'] = await assertUser(session.userId);
     } catch (e) {
       console.log('session fetching failed', e);
     }

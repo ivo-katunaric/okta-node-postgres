@@ -4,20 +4,8 @@ import { ApiModelProperty, ApiResponse } from '@nestjs/swagger';
 import { getUserById, register, sessionLogin } from '../auth.module/okta-client';
 import { IsEmail, IsNotEmpty } from 'class-validator';
 import { Request } from 'express';
-
-export class User {
-  @ApiModelProperty()
-  id: string;
-
-  @ApiModelProperty()
-  email: string;
-
-  @ApiModelProperty()
-  firstName: string;
-
-  @ApiModelProperty()
-  lastName: string;
-}
+import { UserModel } from './user-model';
+import { assertUser } from './assert-user';
 
 export class UserRegisterDto {
   @ApiModelProperty()
@@ -39,20 +27,21 @@ export class UserRegisterDto {
 
 @Controller('users')
 export default class UserController {
-  @ApiResponse({ type: User, status: 201 })
+  @ApiResponse({ type: UserModel, status: 201 })
   @Post()
-  async create(@Body() userData: UserRegisterDto, @Req() request: Request): Promise<User> {
+  async create(@Body() userData: UserRegisterDto, @Req() request: Request) {
     const { email, password, firstName, lastName } = userData;
-    const { id } = await register({ email, password, firstName, lastName });
+    const { id: oktaUserId } = await register({ email, password, firstName, lastName });
+    const user = await assertUser(oktaUserId);
     const { sessionId } = await sessionLogin({ email, password });
     request.res.cookie('sessionId', sessionId);
 
-    return { id, email, firstName, lastName };
+    return { id: user.id, email, firstName, lastName };
   }
 
-  @ApiResponse({ type: User, status: 200 })
+  @ApiResponse({ type: UserModel, status: 200 })
   @Get(':id')
-  async find(@Param('id') id: string): Promise<User> {
+  async find(@Param('id') id: string) {
     try {
       const user = await getUserById(id);
       return user;

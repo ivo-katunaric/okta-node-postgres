@@ -12,17 +12,12 @@ module.exports = [{
   database: DB_DATABASE,
   synchronize: true,
   entities: [
-    "src/models/*.ts"
+    "src/**.module/*-model.ts"
   ],
   subscribers: [
-    "src/subscribers/*.ts"
+    "src/**.module/*-subscriber.ts"
   ],
   migrations: [
     "src/migrations/*.ts"
-  ],
-  cli: {
-    entitiesDir: "src/models",
-    migrationsDir: "src/migrations",
-    subscribersDir: "src/subscribers"
-  }
+  ]
 }];
