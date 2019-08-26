@@ -51,7 +51,7 @@ export default class PhotoController {
 
   @ApiResponse({ status: 200 })
   @Get('download/:slug')
-  async find(@Param('slug') slug: string, @Res() res: express.Response) {
+  async download(@Param('slug') slug: string, @Res() res: express.Response) {
     if (!slug) {
       throw new BadRequestException('Missing `slug` URL parameter');
     }

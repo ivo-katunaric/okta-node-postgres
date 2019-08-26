@@ -20,4 +20,3 @@ export default class AuthMiddleware implements NestMiddleware {
     next();
   }
 }
-
