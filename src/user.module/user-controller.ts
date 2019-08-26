@@ -1,7 +1,7 @@
 import { Body, Controller, Get, NotFoundException, Param, Post, Req } from '@nestjs/common';
 import { ApiModelProperty, ApiResponse } from '@nestjs/swagger';
 
-import { getUserById, register, sessionLogin } from '../auth.module/okta-client';
+import { register, sessionLogin } from '../auth.module/okta-client';
 import { IsEmail, IsNotEmpty } from 'class-validator';
 import { Request } from 'express';
 import { UserModel } from './user-model';
@@ -37,17 +37,5 @@ export default class UserController {
     request.res.cookie('sessionId', sessionId);
 
     return { id: user.id, email, firstName, lastName };
-  }
-
-  @ApiResponse({ type: UserModel, status: 200 })
-  @Get(':id')
-  async find(@Param('id') id: string) {
-    try {
-      const user = await getUserById(id);
-      return user;
-    } catch (e) {
-      console.error('could not find user', id, e);
-      throw new NotFoundException('No such user');
-    }
   }
 }
